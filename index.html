@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>AccountStock – Download</title>
+  <style>
+    :root{--fg:#111;--muted:#666;--bg:#fff;--card:#f8f8f8;--b:#ddd}
+    @media (prefers-color-scheme: dark){:root{--fg:#eaeaea;--muted:#aaa;--bg:#0c0c0c;--card:#151515;--b:#333}}
+    body{margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,Segoe UI,Arial}
+    .wrap{max-width:860px;margin:40px auto;padding:0 16px}
+    header{display:flex;align-items:center;gap:12px}
+    header img{width:40px;height:40px;border-radius:10px}
+    .btn{display:inline-block;padding:12px 18px;border:1px solid var(--b);border-radius:12px;text-decoration:none;color:var(--fg);background:var(--card)}
+    .muted{color:var(--muted)} pre{white-space:pre-wrap;background:var(--card);padding:12px;border-radius:10px;border:1px solid var(--b)}
+    .lang{margin-left:auto;display:flex;gap:8px}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <img src="/assets/logo.png" alt="logo"/>
+    <div>
+      <h1 id="t-title">AccountStock</h1>
+      <div class="muted" id="t-sub">Lightweight accounting & stock desktop app</div>
+    </div>
+    <div class="lang">
+      <button id="btn-en" class="btn">EN</button>
+      <button id="btn-ar" class="btn">العربية</button>
+    </div>
+  </header>
+
+  <p class="muted" id="t-latest">Checking latest version…</p>
+  <p><a id="dl" class="btn" href="#" download>Download</a></p>
+  <p class="muted" id="url"></p>
+
+  <h3 id="t-notes-title">Release notes</h3>
+  <pre id="notes">Loading…</pre>
+  <p class="muted" id="hash"></p>
+
+  <p class="muted" id="t-note1">If SmartScreen blocks the file, click “More info” → “Run anyway”.</p>
+  <p class="muted" id="t-footer">Questions? Email support@stopandshop.com</p>
+</div>
+
+<script>
+const T = {
+  en:{title:"AccountStock",sub:"Lightweight accounting & stock desktop app",latest:"Latest version:",
+      notes:"Release notes",note1:"If SmartScreen blocks the file, click “More info” → “Run anyway”.",
+      footer:"Questions? Email support@stopandshop.com",btn:"Download"},
+  ar:{title:"أكاونت ستوك",sub:"برنامج مكتبي خفيف للحسابات والمخزون",latest:"آخر إصدار:",
+      notes:"ملاحظات الإصدار",note1:"إذا تم حظر التحميل من SmartScreen اضغط “مزيد من المعلومات” ثم “تشغيل على أي حال”.",
+      footer:"للاستفسار: support@stopandshop.com",btn:"تحميل"}
+};
+let lang='en';
+function setLang(l){
+  lang=l; const rtl=l==='ar';
+  document.documentElement.lang=l; document.documentElement.dir=rtl?'rtl':'ltr';
+  t('t-title',T[l].title); t('t-sub',T[l].sub); t('t-notes-title',T[l].notes);
+  t('t-note1',T[l].note1); t('t-footer',T[l].footer);
+  if(window.__m){ t('t-latest',T[l].latest+' v'+window.__m.version);
+                  t('dl',T[l].btn+' v'+window.__m.version,true); }
+}
+function t(id,txt,btn){const el=document.getElementById(id); if(btn) el.textContent=txt; else el.textContent=txt;}
+document.getElementById('btn-en').onclick=()=>setLang('en');
+document.getElementById('btn-ar').onclick=()=>setLang('ar');
+
+fetch('/updates/manifest.json?ts='+Date.now(),{cache:'no-store'})
+  .then(r=>r.json())
+  .then(m=>{
+    window.__m=m;
+    t('t-latest',T[lang].latest+' v'+m.version);
+    const dl=document.getElementById('dl'); dl.href=m.url; dl.textContent=T[lang].btn+' v'+m.version;
+    document.getElementById('url').textContent=m.url;
+    document.getElementById('notes').textContent=m.notes||'';
+    document.getElementById('hash').textContent=m.sha256?('SHA-256: '+m.sha256):'';
+  }).catch(e=>{
+    document.getElementById('t-latest').textContent='Error loading manifest';
+    document.getElementById('notes').textContent=String(e);
+  });
+
+setLang('en');
+</script>
+</body>
+</html>
