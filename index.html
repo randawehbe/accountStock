@@ -12,7 +12,8 @@
     header{display:flex;align-items:center;gap:12px}
     header img{width:40px;height:40px;border-radius:10px}
     .btn{display:inline-block;padding:12px 18px;border:1px solid var(--b);border-radius:12px;text-decoration:none;color:var(--fg);background:var(--card)}
-    .muted{color:var(--muted)} pre{white-space:pre-wrap;background:var(--card);padding:12px;border-radius:10px;border:1px solid var(--b)}
+    .muted{color:var(--muted)}
+    pre{white-space:pre-wrap;background:var(--card);padding:12px;border-radius:10px;border:1px solid var(--b)}
     .lang{margin-left:auto;display:flex;gap:8px}
   </style>
 </head>
@@ -37,71 +38,96 @@
   <h3 id="t-notes-title">Release notes</h3>
   <pre id="notes">Loading…</pre>
   <p class="muted" id="hash"></p>
-<details style="margin-top:16px">
-  <summary><b>Windows says “Unknown publisher”? How to run safely</b></summary>
-  <ol>
-    <li>After download, right-click the file → <b>Properties</b> → if you see <b>Unblock</b>, check it → OK.</li>
-    <li>Double-click the installer. If SmartScreen appears, click <b>More info</b> → <b>Run anyway</b>.</li>
-    <li>When asked by UAC, click <b>Yes</b> (required to install SQL Server Express and app files).</li>
-  </ol>
-  <p><i>Verify integrity (optional):</i></p>
-  <pre>PowerShell:
-Get-FileHash -Algorithm SHA256 .\AccountStockSetup-XXXX.exe</pre>
-  <p>Compare the value with the SHA-256 shown above.</p>
-</details>
 
-<details>
-  <summary><b>تشاهد “ناشر غير معروف”؟ كيفية المتابعة بأمان</b></summary>
-  <ol dir="rtl">
-    <li>بعد التحميل، انقر بزر الماوس الأيمن على الملف → <b>خصائص</b> → إن ظهر <b>إلغاء الحظر</b> فعلّه → موافق.</li>
-    <li>شغّل المُثبّت. إذا ظهر SmartScreen اضغط <b>معلومات إضافية</b> ثم <b>تشغيل على أي حال</b>.</li>
-    <li>عند ظهور نافذة UAC اختر <b>نعم</b> (ضروري لتثبيت SQL Express وملفات البرنامج).</li>
-  </ol>
-  <p><i>تحقق السلامة (اختياري):</i></p>
-  <pre>PowerShell:
+  <details style="margin-top:16px">
+    <summary><b>Windows says “Unknown publisher”? How to run safely</b></summary>
+    <ol>
+      <li>After download, right-click the file → <b>Properties</b> → if you see <b>Unblock</b>, check it → OK.</li>
+      <li>Double-click the installer. If SmartScreen appears, click <b>More info</b> → <b>Run anyway</b>.</li>
+      <li>When asked by UAC, click <b>Yes</b> (required to install SQL Server Express and app files).</li>
+    </ol>
+    <p><i>Verify integrity (optional):</i></p>
+    <pre>PowerShell:
 Get-FileHash -Algorithm SHA256 .\AccountStockSetup-XXXX.exe</pre>
-  <p>قارن القيمة مع رقم SHA-256 المعروض أعلاه.</p>
-</details>
+    <p>Compare the value with the SHA-256 shown above.</p>
+  </details>
+
+  <details>
+    <summary><b>تشاهد “ناشر غير معروف”؟ كيفية المتابعة بأمان</b></summary>
+    <ol dir="rtl">
+      <li>بعد التحميل، انقر بزر الماوس الأيمن على الملف → <b>خصائص</b> → إن ظهر <b>إلغاء الحظر</b> فعِّله → موافق.</li>
+      <li>شغّل المُثبّت. إذا ظهر SmartScreen اضغط <b>معلومات إضافية</b> ثم <b>تشغيل على أي حال</b>.</li>
+      <li>عند ظهور نافذة UAC اختر <b>نعم</b> (ضروري لتثبيت SQL Express وملفات البرنامج).</li>
+    </ol>
+    <p><i>تحقق السلامة (اختياري):</i></p>
+    <pre>PowerShell:
+Get-FileHash -Algorithm SHA256 .\AccountStockSetup-XXXX.exe</pre>
+    <p>قارن القيمة مع رقم SHA-256 المعروض أعلاه.</p>
+  </details>
 
   <p class="muted" id="t-note1">If SmartScreen blocks the file, click “More info” → “Run anyway”.</p>
-  <p class="muted" id="t-footer">Questions? Email support@stopandshop.com</p>
+  <p class="muted" id="t-footer">Questions? Email support@postandshop.com</p>
 </div>
 
 <script>
 const T = {
   en:{title:"AccountStock",sub:"Lightweight accounting & stock desktop app",latest:"Latest version:",
       notes:"Release notes",note1:"If SmartScreen blocks the file, click “More info” → “Run anyway”.",
-      footer:"Questions? Email support@stopandshop.com",btn:"Download"},
+      footer:"Questions? Email support@postandshop.com",btn:"Download"},
   ar:{title:"أكاونت ستوك",sub:"برنامج مكتبي خفيف للحسابات والمخزون",latest:"آخر إصدار:",
       notes:"ملاحظات الإصدار",note1:"إذا تم حظر التحميل من SmartScreen اضغط “مزيد من المعلومات” ثم “تشغيل على أي حال”.",
-      footer:"للاستفسار: support@stopandshop.com",btn:"تحميل"}
+      footer:"للاستفسار: support@postandshop.com",btn:"تحميل"}
 };
+
 let lang='en';
 function setLang(l){
   lang=l; const rtl=l==='ar';
   document.documentElement.lang=l; document.documentElement.dir=rtl?'rtl':'ltr';
-  t('t-title',T[l].title); t('t-sub',T[l].sub); t('t-notes-title',T[l].notes);
-  t('t-note1',T[l].note1); t('t-footer',T[l].footer);
-  if(window.__m){ t('t-latest',T[l].latest+' v'+window.__m.version);
-                  t('dl',T[l].btn+' v'+window.__m.version,true); }
+  set('t-title',T[l].title); set('t-sub',T[l].sub); set('t-notes-title',T[l].notes);
+  set('t-note1',T[l].note1); set('t-footer',T[l].footer);
+  if(window.__m){
+    set('t-latest',T[l].latest+' v'+window.__m.version);
+    document.getElementById('dl').textContent = T[l].btn+' v'+window.__m.version;
+  }
 }
-function t(id,txt,btn){const el=document.getElementById(id); if(btn) el.textContent=txt; else el.textContent=txt;}
+function set(id,txt){const el=document.getElementById(id); if(el) el.textContent=txt;}
 document.getElementById('btn-en').onclick=()=>setLang('en');
 document.getElementById('btn-ar').onclick=()=>setLang('ar');
 
-fetch('updates/manifest.json?ts='+Date.now(),{cache:'no-store'})
-  .then(r=>r.json())
-  .then(m=>{
-    window.__m=m;
-    t('t-latest',T[lang].latest+' v'+m.version);
-    const dl=document.getElementById('dl'); dl.href=m.url; dl.textContent=T[lang].btn+' v'+m.version;
-    document.getElementById('url').textContent=m.url;
-    document.getElementById('notes').textContent=m.notes||'';
-    document.getElementById('hash').textContent=m.sha256?('SHA-256: '+m.sha256):'';
-  }).catch(e=>{
-    document.getElementById('t-latest').textContent='Error loading manifest';
-    document.getElementById('notes').textContent=String(e);
-  });
+// Build a manifest URL relative to THIS folder, robustly:
+(function loadManifest(){
+  // e.g. /accountStock/ → /accountStock/updates/manifest.json (case-sensitive!)
+  const here = location.pathname.replace(/[^\/]*$/, ''); // current dir with trailing slash
+  const manifestUrl = new URL('updates/manifest.json?ts=' + Date.now(), location.origin + here).href;
+
+  fetch(manifestUrl, {cache:'no-store'})
+    .then(async r => {
+      if (!r.ok) {
+        const txt = await r.text().catch(()=> '');
+        throw new Error(`HTTP ${r.status} ${r.statusText} at ${r.url}\n` + txt.slice(0,120));
+      }
+      const text = await r.text();
+      try {
+        return JSON.parse(text);
+      } catch (e) {
+        throw new Error(`Invalid JSON from ${r.url}\nFirst chars: ${text.slice(0,120)}`);
+      }
+    })
+    .then(m => {
+      window.__m = m;
+      set('t-latest', T[lang].latest + ' v' + m.version);
+      const dl = document.getElementById('dl');
+      dl.href = m.url;
+      dl.textContent = (lang==='ar'?T.ar.btn:T.en.btn) + ' v' + m.version;
+      set('url', m.url);
+      document.getElementById('notes').textContent = m.notes || '';
+      set('hash', m.sha256 ? ('SHA-256: ' + m.sha256) : '');
+    })
+    .catch(e => {
+      set('t-latest','Error loading manifest');
+      document.getElementById('notes').textContent = String(e);
+    });
+})();
 
 setLang('en');
 </script>
