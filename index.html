@@ -19,7 +19,7 @@
 <body>
 <div class="wrap">
   <header>
-    <img src="/assets/logo.png" alt="logo"/>
+    <img src="assets/logo.png" alt="logo"/>
     <div>
       <h1 id="t-title">AccountStock</h1>
       <div class="muted" id="t-sub">Lightweight accounting & stock desktop app</div>
@@ -89,7 +89,7 @@ function t(id,txt,btn){const el=document.getElementById(id); if(btn) el.textCont
 document.getElementById('btn-en').onclick=()=>setLang('en');
 document.getElementById('btn-ar').onclick=()=>setLang('ar');
 
-fetch('/updates/manifest.json?ts='+Date.now(),{cache:'no-store'})
+fetch('updates/manifest.json?ts='+Date.now(),{cache:'no-store'})
   .then(r=>r.json())
   .then(m=>{
     window.__m=m;
