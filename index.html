@@ -37,6 +37,31 @@
   <h3 id="t-notes-title">Release notes</h3>
   <pre id="notes">Loading…</pre>
   <p class="muted" id="hash"></p>
+<details style="margin-top:16px">
+  <summary><b>Windows says “Unknown publisher”? How to run safely</b></summary>
+  <ol>
+    <li>After download, right-click the file → <b>Properties</b> → if you see <b>Unblock</b>, check it → OK.</li>
+    <li>Double-click the installer. If SmartScreen appears, click <b>More info</b> → <b>Run anyway</b>.</li>
+    <li>When asked by UAC, click <b>Yes</b> (required to install SQL Server Express and app files).</li>
+  </ol>
+  <p><i>Verify integrity (optional):</i></p>
+  <pre>PowerShell:
+Get-FileHash -Algorithm SHA256 .\AccountStockSetup-XXXX.exe</pre>
+  <p>Compare the value with the SHA-256 shown above.</p>
+</details>
+
+<details>
+  <summary><b>تشاهد “ناشر غير معروف”؟ كيفية المتابعة بأمان</b></summary>
+  <ol dir="rtl">
+    <li>بعد التحميل، انقر بزر الماوس الأيمن على الملف → <b>خصائص</b> → إن ظهر <b>إلغاء الحظر</b> فعلّه → موافق.</li>
+    <li>شغّل المُثبّت. إذا ظهر SmartScreen اضغط <b>معلومات إضافية</b> ثم <b>تشغيل على أي حال</b>.</li>
+    <li>عند ظهور نافذة UAC اختر <b>نعم</b> (ضروري لتثبيت SQL Express وملفات البرنامج).</li>
+  </ol>
+  <p><i>تحقق السلامة (اختياري):</i></p>
+  <pre>PowerShell:
+Get-FileHash -Algorithm SHA256 .\AccountStockSetup-XXXX.exe</pre>
+  <p>قارن القيمة مع رقم SHA-256 المعروض أعلاه.</p>
+</details>
 
   <p class="muted" id="t-note1">If SmartScreen blocks the file, click “More info” → “Run anyway”.</p>
   <p class="muted" id="t-footer">Questions? Email support@stopandshop.com</p>
