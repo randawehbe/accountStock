@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Payment Successful</title>
+<style>
+  :root{--b:#e5e5e5;--fg:#111;--muted:#555;--ok:#0a7}
+  @media(prefers-color-scheme:dark){:root{--b:#333;--fg:#eaeaea;--muted:#aaa}}
+  html,body{height:100%}
+  body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:0;display:grid;place-items:center;min-height:100vh;color:var(--fg)}
+  .card{max-width:560px;padding:24px;border:1px solid var(--b);border-radius:14px;box-shadow:0 10px 24px rgba(0,0,0,.06)}
+  h1{margin:0 0 6px;font-size:24px}
+  p{margin:6px 0 0;color:var(--muted)}
+  .hint{font-size:13px;margin-top:12px}
+  .btn{display:inline-block;margin-top:16px;padding:10px 14px;border-radius:10px;background:var(--ok);color:#fff;text-decoration:none}
+  .row{display:flex;gap:10px;align-items:center;margin-top:14px;flex-wrap:wrap}
+  .small{font-size:12px}
+</style>
+<body>
+  <div class="card">
+    <h1>Payment Successful</h1>
+    <p>Thanks! We’re finalizing your order.</p>
+    <div class="row small" id="statusRow"><span>Updating license…</span></div>
+    <a id="return-to-app" class="btn" href="#">Return to App</a>
+    <p class="hint">You can close this page after your app opens.</p>
+  </div>
+
+<script>
+(function () {
+  // === CONFIG ===
+  const EDGE_ROUTER = 'https://us-central1-smautomation-3b8fc.cloudfunctions.net/edgeRouter'; // TODO: replace
+  const FALLBACK_DELAY_MS = 300; // open app after this delay
+  const LS_SID_KEY   = 'pay_sid';   // set this before redirecting to the provider
+  const LS_PHONE_KEY = 'pay_phone'; // optional (E.164), helps phone-fallback
+
+  // === helpers ===
+  function getParam(name){
+    try { return new URL(window.location.href).searchParams.get(name); }
+    catch { return null; }
+  }
+  function getCookie(name){
+    // same-site cookie only; cannot read cookies set on other domains
+    const m = document.cookie.match(new RegExp('(?:^|; )' + name.replace(/([.$?*|{}()[\\]\\/+^])/g,'\\$1') + '=([^;]*)'));
+    return m ? decodeURIComponent(m[1]) : null;
+  }
+  function setText(id, txt){ var el=document.getElementById(id); if(el) el.textContent=txt; }
+  function log(msg){ try{ console.log('[success]', msg);}catch{} }
+
+  // If provider landed on "/?payment_success", you can optionally redirect to this page:
+  // if (location.pathname === '/' && location.search.includes('payment_success')) {
+  //   location.replace('/success.html' + location.search);
+  //   return;
+  // }
+
+  // Resolve sessionId (most reliable -> least):
+  // 1) explicit ?sessionId=... (best)  2) localStorage from payCreate  3) same-site cookie 'sid'
+  var sid   = getParam('sessionId') || localStorage.getItem(LS_SID_KEY) || getCookie('sid') || '';
+  var phone = localStorage.getItem(LS_PHONE_KEY) || '';
+  var isSuccess = getParam('payment_success') !== null || (String(getParam('status')||'').toLowerCase().includes('success'));
+
+  // Build deep link back to app (custom scheme)
+  var statusStr = isSuccess ? 'paid' : 'unknown';
+  var target = 'accountstock://return?sid=' + encodeURIComponent(sid) + '&status=' + encodeURIComponent(statusStr);
+  var a = document.getElementById('return-to-app');
+  a.setAttribute('href', target);
+
+  // Idempotency: avoid double pings on refresh
+  if (!sessionStorage.getItem('paidPinged')) {
+    // Build GET ping to edgeRouter (cookies for that domain, if any, are sent automatically)
+    var u = new URL(EDGE_ROUTER);
+    u.searchParams.set('payment_success','1'); // tells edgeRouter it’s a success
+
+    // Pass identifiers if we have them (best-effort)
+    if (sid)   u.searchParams.set('sessionId', sid);
+    // Include common alternate ids if present in URL (harmless if absent)
+    ['order_id','order_user_login','invoice','tx_ref','transaction_id','reference'].forEach(function(k){
+      var v = getParam(k);
+      if (v) u.searchParams.set(k, v);
+    });
+    if (phone) u.searchParams.set('phone', phone);
+
+    // Fire-and-forget pixel (avoids CORS)
+    var img = new Image(1,1);
+    img.onload = function(){ log('edgeRouter pinged'); setText('statusRow', 'License updated.'); };
+    img.onerror = function(){ log('edgeRouter ping failed'); setText('statusRow', 'Couldn’t confirm automatically. You can still return to the app.'); };
+    img.src = u.toString();
+
+    sessionStorage.setItem('paidPinged', '1');
+  }
+
+  // Open the app after a short delay
+  setTimeout(function () {
+    try { window.location.href = target; } catch(e) {}
+  }, FALLBACK_DELAY_MS);
+
+  // Cleanup localStorage (optional)
+  try {
+    localStorage.removeItem(LS_SID_KEY);
+    localStorage.removeItem(LS_PHONE_KEY);
+  } catch {}
+
+})();
+</script>
+
+<noscript>
+  <!-- JS disabled? Still send a best-effort ping (won’t include sessionId unless provider appended it). -->
+  <img src="https://us-central1-smautomation-3b8fc.cloudfunctions.net/edgeRouter?payment_success=1" width="1" height="1" alt="">
+</noscript>
+
+</body>
+</html>
